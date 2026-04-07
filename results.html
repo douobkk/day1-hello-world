@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>저녁메뉴 투표 결과</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #eee;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px;
+      backdrop-filter: blur(20px);
+      padding: 48px 44px 40px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      animation: popIn 0.6s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
+    .trophy { font-size: 3rem; text-align: center; margin-bottom: 10px; }
+
+    h1 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #f9ca24, #f0932b, #eb4d4b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      margin-bottom: 36px;
+    }
+
+    /* 결과 리스트 */
+    .results { display: flex; flex-direction: column; gap: 16px; }
+
+    .result-item {
+      animation: slideRight 0.5s ease both;
+    }
+    .result-item:nth-child(1) { animation-delay: 0.05s; }
+    .result-item:nth-child(2) { animation-delay: 0.15s; }
+    .result-item:nth-child(3) { animation-delay: 0.25s; }
+    .result-item:nth-child(4) { animation-delay: 0.35s; }
+    .result-item:nth-child(5) { animation-delay: 0.45s; }
+
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .result-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .medal {
+      font-size: 1.1rem;
+    }
+
+    .result-count {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.55);
+    }
+
+    .bar-track {
+      height: 12px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      width: 0%;
+      transition: width 1s cubic-bezier(.22,1,.36,1);
+    }
+
+    .rank-1 .bar-fill { background: linear-gradient(90deg, #f9ca24, #f0932b); }
+    .rank-2 .bar-fill { background: linear-gradient(90deg, #6c5ce7, #a29bfe); }
+    .rank-3 .bar-fill { background: linear-gradient(90deg, #00b894, #55efc4); }
+    .rank-other .bar-fill { background: linear-gradient(90deg, #636e72, #b2bec3); }
+
+    .rank-1 .result-name { color: #f9ca24; }
+    .rank-2 .result-name { color: #a29bfe; }
+    .rank-3 .result-name { color: #55efc4; }
+
+    /* 총 투표 수 */
+    .total {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.4);
+    }
+    .total b { color: rgba(255,255,255,0.75); }
+
+    /* 버튼 영역 */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
+    .btn-again {
+      background: linear-gradient(135deg, #f9ca24, #f0932b);
+      color: #1a1a2e;
+      box-shadow: 0 4px 16px rgba(249,202,36,0.3);
+    }
+
+    .btn-reset {
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .btn-reset:hover { background: rgba(235,77,75,0.2); color: #eb4d4b; border-color: #eb4d4b; }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px 0;
+      color: rgba(255,255,255,0.35);
+      font-size: 0.95rem;
+    }
+    .empty-state span { font-size: 2.5rem; display: block; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="trophy">📊</div>
+  <h1>투표 결과</h1>
+  <p class="subtitle">모든 투표가 집계되었습니다</p>
+
+  <div class="results" id="results"></div>
+  <p class="total" id="total"></p>
+
+  <div class="btn-row">
+    <button class="btn btn-again" onclick="location.href='index.html'">🗳️ 다시 투표하기</button>
+    <button class="btn btn-reset" onclick="resetVotes()">🗑️ 초기화</button>
+  </div>
+</div>
+
+<script>
+  const medals = ['🥇', '🥈', '🥉'];
+  const rankClass = ['rank-1', 'rank-2', 'rank-3'];
+
+  function renderResults() {
+    const votes = JSON.parse(localStorage.getItem('dinnerVotes') || '{}');
+    const resultsEl = document.getElementById('results');
+    const totalEl = document.getElementById('total');
+    resultsEl.innerHTML = '';
+
+    const entries = Object.entries(votes).sort((a, b) => b[1] - a[1]);
+    const totalVotes = entries.reduce((s, [, v]) => s + v, 0);
+
+    if (entries.length === 0) {
+      resultsEl.innerHTML = `
+        <div class="empty-state">
+          <span>🍽️</span>아직 투표 결과가 없습니다.<br>먼저 투표를 진행해주세요!
+        </div>`;
+      totalEl.textContent = '';
+      return;
+    }
+
+    const maxVotes = entries[0][1];
+
+    entries.forEach(([name, count], i) => {
+      const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+      const rank = i < 3 ? rankClass[i] : 'rank-other';
+      const medal = i < 3 ? medals[i] : `${i+1}.`;
+
+      const item = document.createElement('div');
+      item.className = `result-item ${rank}`;
+      item.innerHTML = `
+        <div class="result-header">
+          <div class="result-name">
+            <span class="medal">${medal}</span>
+            ${escHtml(name)}
+          </div>
+          <div class="result-count">${count}표 (${pct}%)</div>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" data-pct="${Math.round((count / maxVotes) * 100)}"></div>
+        </div>`;
+      resultsEl.appendChild(item);
+    });
+
+    totalEl.innerHTML = `총 <b>${totalVotes}</b>표가 집계되었습니다`;
+
+    // 바 애니메이션 (렌더 후 약간 딜레이)
+    setTimeout(() => {
+      document.querySelectorAll('.bar-fill').forEach(bar => {
+        bar.style.width = bar.dataset.pct + '%';
+      });
+    }, 200);
+  }
+
+  function resetVotes() {
+    if (confirm('정말 투표 결과를 초기화할까요?')) {
+      localStorage.removeItem('dinnerVotes');
+      renderResults();
+    }
+  }
+
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  renderResults();
+</script>
+</body>
+</html>

@@ -1,187 +1,278 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>안녕하세요</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>저녁메뉴 투표</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body, html {
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            color: #2c3e50;
-            position: relative;
-            overflow: hidden;
-        }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Noto Sans KR', sans-serif;
+      color: #eee;
+      padding: 20px;
+    }
 
-        /* 중앙 인사말 */
-        .center-wrap {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-        }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 28px;
+      backdrop-filter: blur(20px);
+      padding: 48px 44px 40px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+      animation: popIn 0.6s cubic-bezier(.22,1,.36,1) both;
+    }
 
-        h1 {
-            font-size: 5rem;
-            font-weight: 700;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
-            animation: fadeIn 2s ease-in-out;
-        }
+    @keyframes popIn {
+      from { opacity: 0; transform: translateY(40px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+    .emoji-header {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 10px;
+      animation: bounce 1.5s infinite alternate;
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-8px); }
+    }
 
-        /* 주식 패널 – 왼쪽 하단, 화면의 약 1/4 크기 */
-        .stock-panel {
-            position: fixed;
-            top: 50%;
-            left: 24px;
-            transform: translateY(-50%);
-            width: 22vw;          /* 화면 너비의 약 1/4 */
-            background: rgba(255,255,255,0.92);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(44,62,80,0.13);
-            padding: 18px 18px 14px;
-            animation: slideIn 0.7s cubic-bezier(.22,1,.36,1) both;
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(200,220,215,0.5);
-        }
+    h1 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 36px;
+      background: linear-gradient(90deg, #f9ca24, #f0932b, #eb4d4b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.35;
+    }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translate(-30px, -50%); }
-            to   { opacity: 1; transform: translate(0,   -50%); }
-        }
+    .options { display: flex; flex-direction: column; gap: 14px; }
 
-        .stock-panel h2 {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #16a085;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #e8f5f2;
-            padding-bottom: 7px;
-        }
+    .option-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      background: rgba(255,255,255,0.06);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 16px 20px;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .option-label::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(249,202,36,0.15), rgba(240,147,43,0.08));
+      opacity: 0;
+      transition: opacity 0.25s;
+      border-radius: 14px;
+    }
+    .option-label:hover { border-color: rgba(249,202,36,0.5); transform: translateX(4px); }
+    .option-label:hover::before { opacity: 1; }
 
-        .stock-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 7px 0;
-            border-bottom: 1px solid #f0f4f3;
-            transition: background 0.2s;
-            border-radius: 6px;
-        }
-        .stock-item:last-child { border-bottom: none; }
-        .stock-item:hover { background: #eafaf6; padding-left: 4px; }
+    input[type="radio"] { display: none; }
 
-        .rank {
-            font-size: 0.68rem;
-            font-weight: 800;
-            color: #fff;
-            background: linear-gradient(135deg, #1abc9c, #16a085);
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+    input[type="radio"]:checked + .option-label {
+      border-color: #f9ca24;
+      background: rgba(249,202,36,0.12);
+      box-shadow: 0 0 20px rgba(249,202,36,0.2);
+    }
+    input[type="radio"]:checked + .option-label::before { opacity: 1; }
 
-        .stock-info { flex: 1; min-width: 0; }
-        .stock-name {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: #2c3e50;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .stock-reason {
-            font-size: 0.62rem;
-            color: #7f8c8d;
-            margin-top: 1px;
-        }
+    .radio-visual {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    input[type="radio"]:checked + .option-label .radio-visual {
+      border-color: #f9ca24;
+      background: #f9ca24;
+    }
+    .radio-visual::after {
+      content: '';
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #1a1a2e;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    input[type="radio"]:checked + .option-label .radio-visual::after { opacity: 1; }
 
-        .stock-change {
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: #e74c3c;
-            flex-shrink: 0;
-        }
+    .option-icon { font-size: 1.5rem; }
+    .option-text { font-size: 1.05rem; font-weight: 700; }
 
-        .stock-footer {
-            font-size: 0.58rem;
-            color: #aab5b2;
-            margin-top: 10px;
-            text-align: right;
-        }
-    </style>
+    /* 직접 입력 옵션 */
+    .custom-input-wrap {
+      display: none;
+      margin-top: 8px;
+      padding: 0 4px;
+      animation: fadeSlide 0.3s ease both;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; max-height: 0; }
+      to   { opacity: 1; max-height: 80px; }
+    }
+    .custom-input-wrap.visible { display: block; }
+
+    .custom-input {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      font-size: 0.95rem;
+      font-family: 'Noto Sans KR', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .custom-input::placeholder { color: rgba(255,255,255,0.35); }
+    .custom-input:focus { border-color: #f9ca24; }
+
+    .btn-submit {
+      margin-top: 32px;
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      font-size: 1.1rem;
+      font-weight: 900;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f9ca24, #f0932b);
+      color: #1a1a2e;
+      box-shadow: 0 6px 24px rgba(249,202,36,0.35);
+      transition: transform 0.15s, box-shadow 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(249,202,36,0.5);
+    }
+    .btn-submit:active { transform: translateY(0); }
+
+    .error-msg {
+      margin-top: 12px;
+      text-align: center;
+      color: #eb4d4b;
+      font-size: 0.88rem;
+      min-height: 20px;
+    }
+  </style>
 </head>
 <body>
+<div class="card">
+  <div class="emoji-header">🍽️</div>
+  <h1>당신의 저녁메뉴에<br>투표하세요!</h1>
 
-    <!-- 중앙 인사말 -->
-    <div class="center-wrap">
-        <h1>안녕하세요</h1>
+  <form id="voteForm" class="options">
+
+    <!-- 옵션 1 -->
+    <input type="radio" name="menu" id="opt1" value="그냥 있는밥~">
+    <label for="opt1" class="option-label">
+      <div class="radio-visual"></div>
+      <span class="option-icon">🍚</span>
+      <span class="option-text">그냥 있는밥~</span>
+    </label>
+
+    <!-- 옵션 2 -->
+    <input type="radio" name="menu" id="opt2" value="시켜먹자!">
+    <label for="opt2" class="option-label">
+      <div class="radio-visual"></div>
+      <span class="option-icon">🛵</span>
+      <span class="option-text">시켜먹자!</span>
+    </label>
+
+    <!-- 옵션 3 (직접 입력) -->
+    <input type="radio" name="menu" id="opt3" value="custom">
+    <label for="opt3" class="option-label">
+      <div class="radio-visual"></div>
+      <span class="option-icon">✏️</span>
+      <span class="option-text">직접 입력하기…</span>
+    </label>
+
+    <div class="custom-input-wrap" id="customWrap">
+      <input type="text" class="custom-input" id="customMenu" maxlength="30"
+             placeholder="원하는 메뉴를 입력해주세요 (예: 치킨!)">
     </div>
 
-    <!-- 한국주식 매입 추천 TOP 5 패널 -->
-    <aside class="stock-panel" aria-label="한국주식 매입 추천 TOP5">
-        <h2>🇰🇷 한국주식 매입 추천 TOP 5</h2>
+    <p class="error-msg" id="errMsg"></p>
+    <button type="submit" class="btn-submit" id="submitBtn">✅ 선택 완료!</button>
+  </form>
+</div>
 
-        <div class="stock-item">
-            <span class="rank">1</span>
-            <div class="stock-info">
-                <div class="stock-name">삼성전자 (005930)</div>
-                <div class="stock-reason">AI 반도체 수혜 · HBM 수요↑</div>
-            </div>
-            <span class="stock-change">▲ 4.2%</span>
-        </div>
+<script>
+  const opt3 = document.getElementById('opt3');
+  const customWrap = document.getElementById('customWrap');
+  const customMenu = document.getElementById('customMenu');
+  const form = document.getElementById('voteForm');
+  const errMsg = document.getElementById('errMsg');
 
-        <div class="stock-item">
-            <span class="rank">2</span>
-            <div class="stock-info">
-                <div class="stock-name">SK하이닉스 (000660)</div>
-                <div class="stock-reason">HBM3E 양산 가속 · 실적 개선</div>
-            </div>
-            <span class="stock-change">▲ 6.1%</span>
-        </div>
+  // 옵션 3 선택 시 입력란 표시
+  document.querySelectorAll('input[name="menu"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      if (opt3.checked) {
+        customWrap.classList.add('visible');
+        customMenu.focus();
+      } else {
+        customWrap.classList.remove('visible');
+      }
+      errMsg.textContent = '';
+    });
+  });
 
-        <div class="stock-item">
-            <span class="rank">3</span>
-            <div class="stock-info">
-                <div class="stock-name">LG에너지솔루션 (373220)</div>
-                <div class="stock-reason">EV 배터리 글로벌 수주 확대</div>
-            </div>
-            <span class="stock-change">▲ 3.5%</span>
-        </div>
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const chosen = document.querySelector('input[name="menu"]:checked');
 
-        <div class="stock-item">
-            <span class="rank">4</span>
-            <div class="stock-info">
-                <div class="stock-name">현대차 (005380)</div>
-                <div class="stock-reason">전기차 신모델 · 미국 시장 성장</div>
-            </div>
-            <span class="stock-change">▲ 2.8%</span>
-        </div>
+    if (!chosen) {
+      errMsg.textContent = '⚠️ 메뉴를 선택해주세요!';
+      return;
+    }
 
-        <div class="stock-item">
-            <span class="rank">5</span>
-            <div class="stock-info">
-                <div class="stock-name">NAVER (035420)</div>
-                <div class="stock-reason">AI 검색·클라우드 사업 확대</div>
-            </div>
-            <span class="stock-change">▲ 3.0%</span>
-        </div>
+    let menuValue = chosen.value;
 
-        <p class="stock-footer">* 투자 참고용 · 실제 투자 전 전문가 상담 권장</p>
-    </aside>
+    if (menuValue === 'custom') {
+      const txt = customMenu.value.trim();
+      if (!txt) {
+        errMsg.textContent = '⚠️ 메뉴를 입력해주세요!';
+        customMenu.focus();
+        return;
+      }
+      menuValue = txt;
+    }
 
+    // localStorage에 투표 누적
+    const votes = JSON.parse(localStorage.getItem('dinnerVotes') || '{}');
+    votes[menuValue] = (votes[menuValue] || 0) + 1;
+    localStorage.setItem('dinnerVotes', JSON.stringify(votes));
+
+    // 결과 페이지로 이동
+    window.location.href = 'results.html';
+  });
+</script>
 </body>
 </html>
