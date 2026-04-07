@@ -192,7 +192,18 @@
   const rankClass = ['rank-1', 'rank-2', 'rank-3'];
 
   function renderResults() {
-    const votes = JSON.parse(localStorage.getItem('dinnerVotes') || '{}');
+    let strVotes = localStorage.getItem('dinnerVotes');
+    let saveTime = localStorage.getItem('dinnerVoteTimestamp');
+    const now = new Date().getTime();
+
+    // 24시간이 지났으면 데이터 무시 및 삭제
+    if (saveTime && now - parseInt(saveTime) > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem('dinnerVotes');
+      localStorage.removeItem('dinnerVoteTimestamp');
+      strVotes = null;
+    }
+
+    const votes = JSON.parse(strVotes || '{}');
     const resultsEl = document.getElementById('results');
     const totalEl = document.getElementById('total');
     resultsEl.innerHTML = '';
@@ -245,6 +256,7 @@
   function resetVotes() {
     if (confirm('정말 투표 결과를 초기화할까요?')) {
       localStorage.removeItem('dinnerVotes');
+      localStorage.removeItem('dinnerVoteTimestamp');
       renderResults();
     }
   }

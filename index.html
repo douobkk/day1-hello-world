@@ -265,10 +265,22 @@
       menuValue = txt;
     }
 
-    // localStorage에 투표 누적
-    const votes = JSON.parse(localStorage.getItem('dinnerVotes') || '{}');
+    // localStorage에 투표 누적 (24시간 유지)
+    let strVotes = localStorage.getItem('dinnerVotes');
+    let saveTime = localStorage.getItem('dinnerVoteTimestamp');
+    const now = new Date().getTime();
+
+    // 24시간(86400000ms) 지났으면 기존 데이터 초기화
+    if (saveTime && now - parseInt(saveTime) > 24 * 60 * 60 * 1000) {
+      strVotes = null;
+    }
+
+    const votes = JSON.parse(strVotes || '{}');
     votes[menuValue] = (votes[menuValue] || 0) + 1;
+    
+    // 저장
     localStorage.setItem('dinnerVotes', JSON.stringify(votes));
+    localStorage.setItem('dinnerVoteTimestamp', now.toString());
 
     // 결과 페이지로 이동
     window.location.href = 'results.html';
