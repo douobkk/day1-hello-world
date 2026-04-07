@@ -5,43 +5,183 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>안녕하세요</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body, html {
             height: 100%;
-            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #2c3e50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 중앙 인사말 */
+        .center-wrap {
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #f4f7f6; /* 부드러운 배경색 */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #2c3e50;
+            height: 100%;
         }
-        .container {
-            text-align: center;
-        }
+
         h1 {
             font-size: 5rem;
             font-weight: 700;
-            margin: 0;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
             animation: fadeIn 2s ease-in-out;
         }
-        
-        /* 나타나는 애니메이션 추가 */
+
         @keyframes fadeIn {
-            from { 
-                opacity: 0; 
-                transform: translateY(20px); 
-            }
-            to { 
-                opacity: 1; 
-                transform: translateY(0); 
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 주식 패널 – 왼쪽 하단, 화면의 약 1/4 크기 */
+        .stock-panel {
+            position: fixed;
+            top: 50%;
+            left: 24px;
+            transform: translateY(-50%);
+            width: 22vw;          /* 화면 너비의 약 1/4 */
+            background: rgba(255,255,255,0.92);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+            padding: 18px 18px 14px;
+            animation: slideIn 0.7s cubic-bezier(.22,1,.36,1) both;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(200,220,215,0.5);
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translate(-30px, -50%); }
+            to   { opacity: 1; transform: translate(0,   -50%); }
+        }
+
+        .stock-panel h2 {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #16a085;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #e8f5f2;
+            padding-bottom: 7px;
+        }
+
+        .stock-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 7px 0;
+            border-bottom: 1px solid #f0f4f3;
+            transition: background 0.2s;
+            border-radius: 6px;
+        }
+        .stock-item:last-child { border-bottom: none; }
+        .stock-item:hover { background: #eafaf6; padding-left: 4px; }
+
+        .rank {
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: #fff;
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stock-info { flex: 1; min-width: 0; }
+        .stock-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #2c3e50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .stock-reason {
+            font-size: 0.62rem;
+            color: #7f8c8d;
+            margin-top: 1px;
+        }
+
+        .stock-change {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: #e74c3c;
+            flex-shrink: 0;
+        }
+
+        .stock-footer {
+            font-size: 0.58rem;
+            color: #aab5b2;
+            margin-top: 10px;
+            text-align: right;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- 중앙 인사말 -->
+    <div class="center-wrap">
         <h1>안녕하세요</h1>
     </div>
+
+    <!-- 한국주식 매입 추천 TOP 5 패널 -->
+    <aside class="stock-panel" aria-label="한국주식 매입 추천 TOP5">
+        <h2>🇰🇷 한국주식 매입 추천 TOP 5</h2>
+
+        <div class="stock-item">
+            <span class="rank">1</span>
+            <div class="stock-info">
+                <div class="stock-name">삼성전자 (005930)</div>
+                <div class="stock-reason">AI 반도체 수혜 · HBM 수요↑</div>
+            </div>
+            <span class="stock-change">▲ 4.2%</span>
+        </div>
+
+        <div class="stock-item">
+            <span class="rank">2</span>
+            <div class="stock-info">
+                <div class="stock-name">SK하이닉스 (000660)</div>
+                <div class="stock-reason">HBM3E 양산 가속 · 실적 개선</div>
+            </div>
+            <span class="stock-change">▲ 6.1%</span>
+        </div>
+
+        <div class="stock-item">
+            <span class="rank">3</span>
+            <div class="stock-info">
+                <div class="stock-name">LG에너지솔루션 (373220)</div>
+                <div class="stock-reason">EV 배터리 글로벌 수주 확대</div>
+            </div>
+            <span class="stock-change">▲ 3.5%</span>
+        </div>
+
+        <div class="stock-item">
+            <span class="rank">4</span>
+            <div class="stock-info">
+                <div class="stock-name">현대차 (005380)</div>
+                <div class="stock-reason">전기차 신모델 · 미국 시장 성장</div>
+            </div>
+            <span class="stock-change">▲ 2.8%</span>
+        </div>
+
+        <div class="stock-item">
+            <span class="rank">5</span>
+            <div class="stock-info">
+                <div class="stock-name">NAVER (035420)</div>
+                <div class="stock-reason">AI 검색·클라우드 사업 확대</div>
+            </div>
+            <span class="stock-change">▲ 3.0%</span>
+        </div>
+
+        <p class="stock-footer">* 투자 참고용 · 실제 투자 전 전문가 상담 권장</p>
+    </aside>
+
 </body>
 </html>
