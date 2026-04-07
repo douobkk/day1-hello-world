@@ -255,10 +255,9 @@
 
   function resetVotes() {
     if (confirm('정말 투표 결과를 초기화할까요?')) {
-      localStorage.removeItem('dinnerVotes');
-      localStorage.removeItem('dinnerVoteTimestamp');
-      renderResults();
-      alert('초기화되었습니다!');
+      localStorage.clear();
+      alert('초기화되어 데이터가 전부 삭제되었습니다!');
+      location.href = 'index.html';
     }
   }
 
